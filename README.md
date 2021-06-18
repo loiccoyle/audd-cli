@@ -3,7 +3,7 @@
 
 Record audio and use the [AudD](https://audd.io) music recognition API from the command line.
 
-The `[audd](./audd)` scripts queries the AudD API. This repository also contains `[audd-notif](./audd-notif)` which uses `[audd](./audd)` and `libnotify` to return the match result.
+The [`audd`](./audd) scripts queries the AudD API. This repository also contains [`audd-notif`](./audd-notif) which uses [`audd`](./audd) and `libnotify` to return the match result.
 
 ## Dependencies:
 The `audd` script requires:
