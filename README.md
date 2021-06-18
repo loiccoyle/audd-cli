@@ -46,7 +46,7 @@ To use `audd` you will need to get an API key from [audd]([https://audd.io).
 Provide the API key with either the `-a` option or by writing the API key to `${XDG_CONFIG_HOME:-$HOME/.config}/audd/api_token`:
 
 ```sh
-$ echo "api-token" > "/home/lcoyle/.config/audd/api_token"
+$ echo "api-token" > "~/.config/audd/api_token"
 ```
 
 `audd` can perform a query using an audio file (the file shouldn't be too large, typically shorter than 20 seconds), or if no file is provided, it will record an audio sample from the provided audio source (`-s` option).
