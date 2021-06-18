@@ -20,7 +20,7 @@ In addition to the above the `audd-notif` script requires:
 tba
 
 ## Usage
-```sh
+```
 $ audd -h
 Usage: audd [OPTION]... [FILE]
 Query the AudD music recognition API.
