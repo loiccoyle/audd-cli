@@ -49,6 +49,8 @@ Provide the API key with either the `-a` option or by writing the API key to `${
 $ echo "api-token" > "/home/lcoyle/.config/audd/api_token"
 ```
 
-`audd` can perform a query using an audio file (the file shouldn't be too large, typically shorter than 20 seconds), or if no file is provided. it will record an audio sample from the provided audio source, with the `-s` option.
+`audd` can perform a query using an audio file (the file shouldn't be too large, typically shorter than 20 seconds), or if no file is provided, it will record an audio sample from the provided audio source (`-s` option).
+
+You can use `ffmpeg -sources pulse` to list available sources.
 
 I recommend reading the [API docs](https://docs.audd.io/) to understand the `-r` and the `-o` options.
