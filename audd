@@ -1,0 +1,124 @@
+#!/bin/sh
+
+# Use https://audd.io/ to detect audio currently playing through audio source.
+# Requires curl, ffmpeg.
+
+TMP_DIR="/tmp/audd"
+[ ! -d "$TMP_DIR" ] && mkdir "$TMP_DIR"
+AUDIO_FILE="$TMP_DIR/recording.mp3"
+PID_FILE="$TMP_DIR/recordingpid"
+
+API_TOKEN_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/audd/api_token"
+[ -f "$API_TOKEN_FILE" ] && API_TOKEN="$(cat "$API_TOKEN_FILE")"
+
+err_msg_exit() {
+    # Print an error to stderr and exit.
+    printf "%s\n" "$*" >&2
+    exit 1
+}
+
+type curl > /dev/null || err_msg_exit "'curl' not found."
+type ffmpeg > /dev/null || err_msg_exit "'ffmpeg' not found."
+
+usage() {
+    printf "Usage: audd [OPTION]... [FILE]
+Query the AudD music recognition API.
+
+Get a free API token at: https://audd.io/
+
+The API token can be read from file:
+$ echo \"api-token\" > \"%s\"
+
+If no FILE is provided, a recording is made using the AUDIO_SOURCE.
+
+Usage:
+    -h                    Show this message and exit.
+    -a API_KEY            AudD API token.
+    -s AUDIO_SOURCE       ffmpeg audio input source, (default: \"default\").
+    -t RECORDING_TIME     Length of recording time, in seconds, (default: 3).
+    -r API_RETURN         AudD API return parameter, see https://docs.audd.io/,
+                          (default: \"apple_music,spotify\").
+    -o                    Use the \"recognizeWithOffset\" endpoint.
+" "$API_TOKEN_FILE"
+}
+
+start_recording() {
+	ffmpeg \
+        -hide_banner \
+        -f pulse -i "$AUDIO_SOURCE" -ac 1 \
+        -c:a mp3 \
+        -y "$AUDIO_FILE" > /dev/null 2>&1 &
+    printf "%s\n" "$!" > "$PID_FILE"
+}
+
+kill_recording() {
+    # kill with SIGTERM, allowing finishing touches.
+    local pid="$(cat "$PID_FILE")"
+    kill "$pid"
+    rm -f "$PID_FILE"
+    # even after SIGTERM, ffmpeg may still run, so wait till it's done.
+    while kill -0 "$pid" 2> /dev/null; do
+        sleep 0.1
+    done
+}
+
+record() {
+    start_recording && sleep "$RECORDING_TIME" && kill_recording
+}
+
+query() {
+    curl --silent "https://api.audd.io/$ENDPOINT" \
+        -F api_token="$API_TOKEN" \
+        -F file=@"$AUDIO_FILE" \
+        -F return="$API_RETURN"
+}
+
+# Defaults
+RECORDING_TIME=3  # in seconds
+AUDIO_SOURCE="default"
+API_RETURN="apple_music,spotify"
+ENDPOINT=""
+
+# Parse options
+while getopts ":hoa:s:t:r:" opt; do
+    case $opt in
+        "h")
+            usage
+            exit 0
+            ;;
+        "a")
+            API_TOKEN="$OPTARG"
+            ;;
+        "s")
+            AUDIO_SOURCE="$OPTARG"
+            ;;
+        "t")
+            RECORDING_TIME="$OPTARG"
+            ;;
+        "r")
+            API_RETURN="$OPTARG"
+            ;;
+        "o")
+            ENDPOINT="recognizeWithOffset/"
+            ;;
+        "?")
+            usage >&2
+            err_msg_exit "Invalid Option: -$OPTARG"
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+[ -z "$API_TOKEN" ] && err_msg_exit "No API_TOKEN provided. Use the -a option or write it to \"$API_TOKEN_FILE\""
+
+if [ -z "$1" ]; then
+    record || exit
+else
+    if [ -f "$1" ]; then
+        AUDIO_FILE="$1"
+    else
+        err_msg_exit "audd: File \"$1\" not found."
+    fi
+fi
+
+[ -f "$AUDIO_FILE" ] && query
