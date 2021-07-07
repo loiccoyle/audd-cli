@@ -8,6 +8,7 @@ type jq >/dev/null || err_msg_exit "'jq' not found."
 
 TMP_DIR="/tmp/audd"
 ARTWORK_FILE="$TMP_DIR/artwork.jpeg"
+APPLE_MUSIC_REGION="fr"
 
 # set the source to the monitor of the current output sink
 SOURCE="$(ffmpeg -sinks pulse 2>/dev/null | grep '\*' | cut -d' ' -f2).monitor"
@@ -56,7 +57,7 @@ if type dunstify >/dev/null; then
         "$ARTIST" "$TITLE")" in
         "apple music")
             AM_LINK="$(echo "$RESPONSE" | jq -r ".result.apple_music.url")"
-            xdg-open "${AM_LINK}"
+            xdg-open "${AM_LINK/\/us\//\/$APPLE_MUSIC_REGION\/}"
             ;;
         "spotify")
             SPOT_LINK="$(echo "$RESPONSE" | jq -r ".result.spotify.external_urls.spotify")"
