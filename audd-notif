@@ -3,15 +3,15 @@
 # Small script to run audd, with notifications.
 # Requires audd, jq, dunstify (optional).
 
-type audd > /dev/null || err_msg_exit "'audd' not found."
-type jq > /dev/null || err_msg_exit "'jq' not found."
+type audd >/dev/null || err_msg_exit "'audd' not found."
+type jq >/dev/null || err_msg_exit "'jq' not found."
 
 TMP_DIR="/tmp/audd"
 ARTWORK_FILE="$TMP_DIR/artwork.jpeg"
 
 # set the source to the monitor of the current output sink
 SOURCE="$(ffmpeg -sinks pulse 2>/dev/null | grep '\*' | cut -d' ' -f2).monitor"
-if ! ffmpeg -sources pulse 2> /dev/null | grep -q "$SOURCE" ;then
+if ! ffmpeg -sources pulse 2>/dev/null | grep -q "$SOURCE"; then
     # exit if doesn't exist
     echo "Source monitor \"$SOURCE\" not found." >&2
     exit 1
@@ -26,8 +26,8 @@ if [ "$(echo "$RESPONSE" | jq -r ".status")" = "error" ]; then
     notify-send -i "dialog-error" "AudD - API error" "$(echo "$RESPONSE" | jq -r ".error.error_message")"
     exit 2
 fi
-if [ "$(echo "$RESPONSE" | jq -r ".status")" = "success" ] && \
-    [ "$(echo "$RESPONSE" | jq -r ".result")" = "null" ]; then
+if [ "$(echo "$RESPONSE" | jq -r ".status")" = "success" ] \
+    && [ "$(echo "$RESPONSE" | jq -r ".result")" = "null" ]; then
     notify-send -i "music" "AudD" "Failed to identify song."
     exit
 fi
@@ -46,9 +46,9 @@ TITLE="$(echo "$RESPONSE" | jq -r ".result.title")"
 # spotify artwork
 LINK_ARTWORK="$(echo "$RESPONSE" | jq -r ".result.spotify.album.images[0].url")"
 
-curl --silent "$LINK_ARTWORK" -o "$ARTWORK_FILE" > /dev/null 2>&1
+curl --silent "$LINK_ARTWORK" -o "$ARTWORK_FILE" >/dev/null 2>&1
 
-if type dunstify > /dev/null; then
+if type dunstify >/dev/null; then
     case "$(dunstify -i "$ARTWORK_FILE" \
         --action="listn,listn" \
         --action="apple music,apple music" \

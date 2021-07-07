@@ -17,8 +17,8 @@ err_msg_exit() {
     exit 1
 }
 
-type curl > /dev/null || err_msg_exit "'curl' not found."
-type ffmpeg > /dev/null || err_msg_exit "'ffmpeg' not found."
+type curl >/dev/null || err_msg_exit "'curl' not found."
+type ffmpeg >/dev/null || err_msg_exit "'ffmpeg' not found."
 
 usage() {
     printf "Usage: audd [OPTION]... [FILE]
@@ -43,12 +43,12 @@ Usage:
 }
 
 start_recording() {
-	ffmpeg \
+    ffmpeg \
         -hide_banner \
         -f pulse -i "$AUDIO_SOURCE" -ac 1 \
         -c:a mp3 \
-        -y "$AUDIO_FILE" > /dev/null 2>&1 &
-    printf "%s\n" "$!" > "$PID_FILE"
+        -y "$AUDIO_FILE" >/dev/null 2>&1 &
+    printf "%s\n" "$!" >"$PID_FILE"
 }
 
 kill_recording() {
@@ -58,7 +58,7 @@ kill_recording() {
     kill "$pid"
     rm -f "$PID_FILE"
     # even after SIGTERM, ffmpeg may still run, so wait till it's done.
-    while kill -0 "$pid" 2> /dev/null; do
+    while kill -0 "$pid" 2>/dev/null; do
         sleep 0.1
     done
 }
@@ -75,7 +75,7 @@ query() {
 }
 
 # Defaults
-RECORDING_TIME=3  # in seconds
+RECORDING_TIME=3 # in seconds
 AUDIO_SOURCE="default"
 API_RETURN="apple_music,spotify"
 ENDPOINT=""
@@ -108,7 +108,7 @@ while getopts ":hoa:s:t:r:" opt; do
             ;;
     esac
 done
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 [ -z "$API_TOKEN" ] && err_msg_exit "No API_TOKEN provided. Use the -a option or write it to \"$API_TOKEN_FILE\""
 
