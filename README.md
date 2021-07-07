@@ -1,25 +1,43 @@
 # audd
-<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+
+<p align="center">
+  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://aur.archlinux.org/packages/audd-cli-git/"><img src="https://img.shields.io/aur/version/audd-cli-git"></a>
+</p>
 
 Record audio and use the [AudD](https://audd.io) music recognition API from the command line.
 
 The [`audd`](./audd) scripts queries the AudD API. This repository also contains [`audd-notif`](./audd-notif) which uses [`audd`](./audd) and `libnotify` to return the match result.
 
 ## Dependencies:
+
 The `audd` script requires:
-* [curl](https://github.com/curl/curl)
-* [ffmpeg](https://git.ffmpeg.org/ffmpeg.git)
+
+- [curl](https://github.com/curl/curl)
+- [ffmpeg](https://git.ffmpeg.org/ffmpeg.git)
 
 In addition to the above the `audd-notif` script requires:
-* [jq](https://github.com/stedolan/jq)
-* notify-send
-* [dunstify](https://github.com/dunst-project/dunst) (optional)
+
+- [jq](https://github.com/stedolan/jq)
+- notify-send
+- [dunstify](https://github.com/dunst-project/dunst) (optional)
 
 ## Installation
 
-tba
+#### Manual
+
+Just clone this repo and place the `audd` and `audd-notif` scripts on your `$PATH`.
+
+#### Arch (AUR):
+
+Using your favourite AUR helper:
+
+```sh
+$ paru -S audd-cli-git
+```
 
 ## Usage
+
 ```
 $ audd -h
 Usage: audd [OPTION]... [FILE]
