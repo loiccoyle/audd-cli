@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Small script to run audd, with notifications.
-# Requires audd, jq, dunstify (optional).
+# Requires audd, jq, notify-send, dunstify (optional).
 
 type audd >/dev/null || err_msg_exit "'audd' not found."
 type jq >/dev/null || err_msg_exit "'jq' not found."
