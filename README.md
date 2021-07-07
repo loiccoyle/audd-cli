@@ -46,7 +46,7 @@ Query the AudD music recognition API.
 Get a free API token at: https://audd.io/
 
 The API token can be read from file:
-$ echo "api-token" > "/home/lcoyle/.config/audd/api_token"
+$ echo "api-token" > "~/.config/audd/api_token"
 
 If no FILE is provided, a recording is made using the AUDIO_SOURCE.
 
