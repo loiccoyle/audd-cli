@@ -3,6 +3,12 @@
 # Small script to run audd, with notifications.
 # Requires audd, jq, notify-send, dunstify (optional).
 
+err_msg_exit() {
+    # Print an error to stderr and exit.
+    printf "%s\n" "$*" >&2
+    exit 1
+}
+
 type audd >/dev/null || err_msg_exit "'audd' not found."
 type jq >/dev/null || err_msg_exit "'jq' not found."
 
